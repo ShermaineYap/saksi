@@ -10,7 +10,7 @@ import {
 import { ask, windowsOf, type AgentEvent, type LedgerEntry } from "@/lib/agent";
 import type { Content } from "@/lib/agentServer";
 
-const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/";
+const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/ShermaineYap/saksi";
 const VIDEO = process.env.NEXT_PUBLIC_VIDEO_URL || "";
 
 const CUSTODIANS = [

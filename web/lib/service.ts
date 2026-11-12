@@ -1,9 +1,15 @@
 // Mock "internal service" whose bearer credential the agent must use without ever showing it
 // to the LLM. Credentials are stateless: token = nonce(16) || HMAC-SHA256(secret, nonce)[0..16].
 // (HMAC here belongs to the mock service, not to SAKSI; SAKSI never encrypts with it.)
-import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
-const secret = () => process.env.SERVICE_SECRET || "saksi-demo-service-secret-not-for-production";
+// Signing secret of the mock service: SERVICE_SECRET if set, otherwise derived from the
+// server-only LLM key (stable across serverless instances, never sent to the browser).
+const secret = () =>
+  process.env.SERVICE_SECRET ||
+  (process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY
+    ? createHash("sha256").update("saksi-mock-ledger:" + (process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY)).digest("hex")
+    : "saksi-demo-service-secret-not-for-production");
 
 const b64u = (b: Buffer) => b.toString("base64url");
 
