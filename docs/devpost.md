@@ -101,7 +101,7 @@ The ingredients are classical: Shamir 1979, Rabin–Ben-Or 1989 check vectors, G
 - **No cipher, hash, curve or library cryptography in the trust path.** The only external dependency is the operating system's random number generator.
 - **Untrusted input is validated.** Values must be canonical field elements, sizes are bounded, index 0 is forbidden, and if two shares claim one index the one with more witness confirmations is kept. Every error path returns ⊥.
 - **One-time keys.** Keys are fresh for every epoch, and refresh invalidates old shares.
-- **Key lifetime.** Shares, keys, coefficients and the reconstructed key are zeroized from memory as soon as they are used.
+- **Key lifetime.** In the Rust core, shares, keys, coefficients and the reconstructed key are zeroized as soon as they are used. (In the browser demo the credential briefly exists as a JavaScript string, which cannot be zeroized; it lives for about 1 ms per use.)
 
 **Vulnerability windows mitigated.** Silent corruption, the Tompa–Woll last-submitter attack, rushing during reconstruction, replay and cross-session substitution, stolen old shares (via refresh), an inconsistent dealer, sub-threshold collusion, biased coefficients, timing leaks, and using a wrong key without noticing.
 
@@ -137,7 +137,7 @@ Both deliberately leaky controls are flagged, which shows the test can detect a 
 
 ## Applied environment: the Kunci Agent
 
-The WebAssembly build runs in a browser app. An API credential is dealt 3-of-5 across five custodians: the browser, a password- or passkey-derived store, the server, and two simulated colleagues. An LLM agent plans the user's task using Gemini function calling, with Groq as a fallback. When the agent needs the credential, it calls a tool that runs SAKSI's two-round validated reconstruction. The tool shows which custodians were accepted, rejected or located, uses the key for exactly one request, and then wipes it. **The model only ever receives the tool's result; no share, tag, key or credential reaches the LLM provider.** A *tamper* switch on each custodian lets you rerun the attacks live.
+The WebAssembly build runs in a browser app. A real API credential (for a mock ledger service of a fictional Malaysian SME) is dealt 3-of-5 across five custodians, all simulated in the browser for the demo: this device, a passkey vault, server escrow and two colleagues. An LLM agent (Gemini 3 Flash via function calling, with Groq as a fallback) plans the user's task. When the agent needs the credential, it calls a tool that runs SAKSI's two-round validated reconstruction. The tool shows which custodians were accepted, rejected or located, uses the key for exactly one request, and then wipes it. **The model only ever receives the tool's result; no share, tag, key or credential reaches the LLM provider.** A *tamper* switch on each custodian lets you rerun the attacks live.
 
 ## Limitations
 
