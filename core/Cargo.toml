@@ -1,0 +1,35 @@
+[package]
+name = "saksi-core"
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+description = "SAKSI: information-theoretic, cheater-identifying secret sharing over GF(2^127 - 1)"
+repository = "https://github.com/saksi-crypto/saksi"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "saksi"
+path = "src/bin/saksi.rs"
+required-features = ["cli"]
+
+[features]
+default = ["cli"]
+cli = []
+wasm = ["dep:wasm-bindgen", "getrandom/js"]
+
+[dependencies]
+getrandom = "0.2"
+zeroize = { version = "1", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+wasm-bindgen = { version = "=0.2.130", optional = true }
+
+[dev-dependencies]
+proptest = "1"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

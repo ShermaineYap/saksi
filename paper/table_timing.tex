@@ -1,0 +1,12 @@
+\begin{tabular}{@{}lrrrl@{}}
+\toprule
+Operation (class A vs class B) & Samples & Mean A & Mean B & $|t|$ \\
+\midrule
+Fe::mul (fixed 0 vs random) & 1{,}000,000 & 88.6 & 88.6 & 0.50 \\
+Fe::inv (fixed 1 vs random) & 250{,}000 & 4899.9 & 4899.9 & 1.11 \\
+tag verify (valid vs forged tag) & 1{,}000,000 & 146.5 & 146.5 & 0.85 \\
+Lagrange combine 3 shares (zero key vs random key) & 1{,}000,000 & 130.7 & 130.7 & 0.57 \\
+\emph{control:} leaky Euclid inverse (fixed 1 vs random) & 250{,}000 & 135.1 & 2667.6 & 3421.23 \\
+\emph{control:} leaky early-exit compare (equal vs random) & 1{,}000,000 & 90.1 & 85.9 & 192.46 \\
+\bottomrule
+\end{tabular}

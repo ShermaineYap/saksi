@@ -1,0 +1,186 @@
+{
+ "e5": [
+  {
+   "attack": "bit flip in one share",
+   "trials": 1000,
+   "control": "plain Shamir",
+   "control_wrong_key_rate": 0.819,
+   "saksi_wrong_key_rate": 0.0,
+   "saksi_cheater_named_rate": 1.0
+  },
+  {
+   "attack": "random share replacement",
+   "trials": 1000,
+   "control": "plain Shamir",
+   "control_wrong_key_rate": 1.0,
+   "saksi_wrong_key_rate": 0.0,
+   "saksi_cheater_named_rate": 1.0
+  },
+  {
+   "attack": "Tompa-Woll: last submitter shifts share",
+   "trials": 1000,
+   "control": "plain Shamir",
+   "control_wrong_key_rate": 1.0,
+   "saksi_wrong_key_rate": 0.0,
+   "saksi_cheater_named_rate": 1.0
+  },
+  {
+   "attack": "cross-session substitution",
+   "trials": 1000,
+   "control": "plain Shamir",
+   "control_wrong_key_rate": 1.0,
+   "saksi_wrong_key_rate": 0.0,
+   "saksi_cheater_named_rate": 1.0
+  },
+  {
+   "attack": "two colluding cheaters, lying keys",
+   "trials": 500,
+   "control": "plain Shamir",
+   "control_wrong_key_rate": 1.0,
+   "saksi_wrong_key_rate": 0.0,
+   "saksi_cheater_named_rate": 1.0
+  },
+  {
+   "attack": "replay share from previous epoch",
+   "trials": 500,
+   "control": "plain Shamir",
+   "control_wrong_key_rate": 1.0,
+   "saksi_wrong_key_rate": 0.0,
+   "saksi_cheater_named_rate": 1.0
+  },
+  {
+   "attack": "inconsistent dealer (tags valid)",
+   "trials": 500,
+   "control": "plain Shamir",
+   "control_wrong_key_rate": 1.0,
+   "saksi_wrong_key_rate": 0.0,
+   "saksi_cheater_named_rate": 1.0
+  },
+  {
+   "attack": "rushing: forge after seeing keys",
+   "trials": 500,
+   "control": "one-round reveal (protocol violation)",
+   "control_wrong_key_rate": null,
+   "control_tag_layer_bypassed_rate": 1.0,
+   "control_then_caught_by_syndrome_rate": 1.0,
+   "saksi_tag_layer_bypassed_rate": 0.0
+  },
+  {
+   "attack": "3 of 5 colluders (beyond the c < n/2 bound)",
+   "trials": 100,
+   "saksi_wrong_key_rate": 1.0,
+   "saksi_fail_closed_rate": 0.0,
+   "note": "expected: honest-majority bound is tight; with c >= t the coalition holds the key anyway"
+  }
+ ],
+ "e3": {
+  "saksi_toy": {
+   "p": 31,
+   "t": 3,
+   "shares_held": 2,
+   "candidate_secrets": 31,
+   "secret_space": 31,
+   "bits_leaked": 0.0
+  },
+  "mignotte_control": {
+   "moduli": [
+    11,
+    13,
+    17,
+    19,
+    23
+   ],
+   "secret_range": [
+    437,
+    2431
+   ],
+   "shares_held": 2,
+   "candidate_secrets": 14,
+   "secret_space": 1993,
+   "bits_leaked": 7.153,
+   "true_secret_in_candidates": true
+  }
+ },
+ "e2": {
+  "sharings": 100000,
+  "bins": 256,
+  "chi2_pvalues_shares_1_2_5": [
+   0.2972,
+   0.9411,
+   0.885
+  ],
+  "all_pass_at_0_01": true,
+  "exact_MI_bits_uniform_coeffs": 0.0,
+  "exact_MI_bits_biased_coeffs_control": 0.005625
+ },
+ "e6": {
+  "trials": 150,
+  "correct_key_rate": 1.0,
+  "wrong_key_rate": 0.0,
+  "cheater_named_rate": 1.0,
+  "seconds": 0.6
+ },
+ "e7": {
+  "mutated_bundles": 2000,
+  "crashes": 0,
+  "wrong_key_returned": 0
+ },
+ "timing": [
+  {
+   "op": "Fe::mul (fixed 0 vs random)",
+   "samples": 1000000,
+   "t": 0.5,
+   "mean_fixed": 88.6,
+   "mean_random": 88.6,
+   "verdict": "no leak detected"
+  },
+  {
+   "op": "Fe::inv (fixed 1 vs random)",
+   "samples": 250000,
+   "t": 1.11,
+   "mean_fixed": 4899.9,
+   "mean_random": 4899.9,
+   "verdict": "no leak detected"
+  },
+  {
+   "op": "tag verify (valid vs forged tag)",
+   "samples": 1000000,
+   "t": -0.85,
+   "mean_fixed": 146.5,
+   "mean_random": 146.5,
+   "verdict": "no leak detected"
+  },
+  {
+   "op": "Lagrange combine 3 shares (zero key vs random key)",
+   "samples": 1000000,
+   "t": 0.57,
+   "mean_fixed": 130.7,
+   "mean_random": 130.7,
+   "verdict": "no leak detected"
+  },
+  {
+   "op": "CONTROL leaky Euclid inverse (fixed 1 vs random)",
+   "samples": 250000,
+   "t": -3421.23,
+   "mean_fixed": 135.1,
+   "mean_random": 2667.6,
+   "verdict": "LEAK"
+  },
+  {
+   "op": "CONTROL leaky early-exit compare (equal vs random)",
+   "samples": 1000000,
+   "t": 192.46,
+   "mean_fixed": 90.1,
+   "mean_random": 85.9,
+   "verdict": "LEAK"
+  }
+ ],
+ "bench": {
+  "mul_ns": 9.0,
+  "inv_ns": 2430.9,
+  "deal_5_3_32B_us": 40.8,
+  "reconstruct_5_3_us": 45.2,
+  "keyless_decode_5_3_1err_us": 62.6,
+  "sink": 0
+ }
+}

@@ -1,0 +1,72 @@
+{
+ "macros": {
+  "EonePrimes": "$(p,t)=(31,3)$, $(p,t)=(101,2)$, $(p,t)=(13,4)$",
+  "EoneAllIdentical": "Yes",
+  "EtwoN": "100{,}000",
+  "EtwoBins": "256",
+  "EtwoP": "0.297, 0.941, 0.885",
+  "EtwoMIbiased": "0.0056",
+  "EtwoMIuniform": "0.0",
+  "EthreeSaksiCand": "31",
+  "EthreeSaksiSpace": "31",
+  "EthreeSaksiBits": "0.00",
+  "EthreeMigCand": "14",
+  "EthreeMigSpace": "1{,}993",
+  "EthreeMigBits": "7.15",
+  "EfourTrials": "200{,}000",
+  "EfourMaxDev": "0.0010",
+  "EfiveBitflip": "81.9\\%",
+  "EsixTrials": "150",
+  "EsixCorrect": "100.0\\%",
+  "EsixWrong": "0.0\\%",
+  "EsixNamed": "100.0\\%",
+  "EsevenN": "2{,}000",
+  "EsevenCrash": "0",
+  "EsevenWrong": "0",
+  "EeightT": "380.2",
+  "EeightN": "200{,}000",
+  "BenchMul": "9.0",
+  "BenchInv": "2.43",
+  "BenchDeal": "40.8",
+  "BenchRec": "45.2",
+  "BenchKeyless": "62.6",
+  "TimingMaxCore": "1.11",
+  "TimingMinCtrl": "192",
+  "TimingSamples": "1{,}000{,}000"
+ },
+ "rush": {
+  "attack": "rushing: forge after seeing keys",
+  "trials": 500,
+  "control": "one-round reveal (protocol violation)",
+  "control_wrong_key_rate": null,
+  "control_tag_layer_bypassed_rate": 1.0,
+  "control_then_caught_by_syndrome_rate": 1.0,
+  "saksi_tag_layer_bypassed_rate": 0.0
+ },
+ "bound": {
+  "attack": "3 of 5 colluders (beyond the c < n/2 bound)",
+  "trials": 100,
+  "saksi_wrong_key_rate": 1.0,
+  "saksi_fail_closed_rate": 0.0,
+  "note": "expected: honest-majority bound is tight; with c >= t the coalition holds the key anyway"
+ },
+ "e6": {
+  "trials": 150,
+  "correct_key_rate": 1.0,
+  "wrong_key_rate": 0.0,
+  "cheater_named_rate": 1.0,
+  "seconds": 0.5
+ },
+ "e7": {
+  "mutated_bundles": 2000,
+  "crashes": 0,
+  "wrong_key_returned": 0
+ },
+ "e8": {
+  "op": "F.mul fixed 0 vs random",
+  "samples": 200000,
+  "t": -380.19,
+  "verdict": "LEAK",
+  "note": "expected: Python big integers are variable-time; this is why the core is in Rust"
+ }
+}

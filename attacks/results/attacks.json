@@ -1,0 +1,234 @@
+{
+  "E1_perfect_secrecy": {
+    "toy_cases": [
+      {
+        "p": 31,
+        "t": 3,
+        "coalition": 2,
+        "secrets": 31,
+        "polys_per_secret": 961,
+        "views": 961,
+        "count_per_view": [
+          1
+        ],
+        "identical_for_all_secrets": true
+      },
+      {
+        "p": 101,
+        "t": 2,
+        "coalition": 1,
+        "secrets": 101,
+        "polys_per_secret": 101,
+        "views": 101,
+        "count_per_view": [
+          1
+        ],
+        "identical_for_all_secrets": true
+      },
+      {
+        "p": 13,
+        "t": 4,
+        "coalition": 3,
+        "secrets": 13,
+        "polys_per_secret": 2197,
+        "views": 2197,
+        "count_per_view": [
+          1
+        ],
+        "identical_for_all_secrets": true
+      }
+    ],
+    "tags_independent_of_secret_p31": true,
+    "mutual_information_bits": 0.0
+  },
+  "E2_uniformity": {
+    "sharings": 100000,
+    "bins": 256,
+    "chi2_pvalues_shares_1_2_5": [
+      0.2972,
+      0.9411,
+      0.885
+    ],
+    "all_pass_at_0_01": true,
+    "exact_MI_bits_uniform_coeffs": 0.0,
+    "exact_MI_bits_biased_coeffs_control": 0.005625
+  },
+  "E3_collusion_z3": {
+    "saksi_toy": {
+      "p": 31,
+      "t": 3,
+      "shares_held": 2,
+      "candidate_secrets": 31,
+      "secret_space": 31,
+      "bits_leaked": 0.0
+    },
+    "mignotte_control": {
+      "moduli": [
+        11,
+        13,
+        17,
+        19,
+        23
+      ],
+      "secret_range": [
+        437,
+        2431
+      ],
+      "shares_held": 2,
+      "candidate_secrets": 14,
+      "secret_space": 1993,
+      "bits_leaked": 7.153,
+      "true_secret_in_candidates": true
+    }
+  },
+  "E4_forgery_rate": {
+    "trials_per_p": 200000,
+    "rows": [
+      {
+        "p": 5,
+        "empirical": 0.19908,
+        "theory_1_over_p": 0.2
+      },
+      {
+        "p": 7,
+        "empirical": 0.14302,
+        "theory_1_over_p": 0.14285714285714285
+      },
+      {
+        "p": 11,
+        "empirical": 0.091145,
+        "theory_1_over_p": 0.09090909090909091
+      },
+      {
+        "p": 13,
+        "empirical": 0.075915,
+        "theory_1_over_p": 0.07692307692307693
+      },
+      {
+        "p": 17,
+        "empirical": 0.058895,
+        "theory_1_over_p": 0.058823529411764705
+      },
+      {
+        "p": 31,
+        "empirical": 0.03203,
+        "theory_1_over_p": 0.03225806451612903
+      },
+      {
+        "p": 61,
+        "empirical": 0.01609,
+        "theory_1_over_p": 0.01639344262295082
+      },
+      {
+        "p": 127,
+        "empirical": 0.007945,
+        "theory_1_over_p": 0.007874015748031496
+      },
+      {
+        "p": 257,
+        "empirical": 0.003815,
+        "theory_1_over_p": 0.0038910505836575876
+      }
+    ]
+  },
+  "E5_active_attacks": {
+    "rows": [
+      {
+        "attack": "bit flip in one share",
+        "trials": 1000,
+        "control": "plain Shamir",
+        "control_wrong_key_rate": 0.819,
+        "saksi_wrong_key_rate": 0.0,
+        "saksi_cheater_named_rate": 1.0
+      },
+      {
+        "attack": "random share replacement",
+        "trials": 1000,
+        "control": "plain Shamir",
+        "control_wrong_key_rate": 1.0,
+        "saksi_wrong_key_rate": 0.0,
+        "saksi_cheater_named_rate": 1.0
+      },
+      {
+        "attack": "Tompa-Woll: last submitter shifts share",
+        "trials": 1000,
+        "control": "plain Shamir",
+        "control_wrong_key_rate": 1.0,
+        "saksi_wrong_key_rate": 0.0,
+        "saksi_cheater_named_rate": 1.0
+      },
+      {
+        "attack": "cross-session substitution",
+        "trials": 1000,
+        "control": "plain Shamir",
+        "control_wrong_key_rate": 1.0,
+        "saksi_wrong_key_rate": 0.0,
+        "saksi_cheater_named_rate": 1.0
+      },
+      {
+        "attack": "two colluding cheaters, lying keys",
+        "trials": 500,
+        "control": "plain Shamir",
+        "control_wrong_key_rate": 1.0,
+        "saksi_wrong_key_rate": 0.0,
+        "saksi_cheater_named_rate": 1.0
+      },
+      {
+        "attack": "replay share from previous epoch",
+        "trials": 500,
+        "control": "plain Shamir",
+        "control_wrong_key_rate": 1.0,
+        "saksi_wrong_key_rate": 0.0,
+        "saksi_cheater_named_rate": 1.0
+      },
+      {
+        "attack": "inconsistent dealer (tags valid)",
+        "trials": 500,
+        "control": "plain Shamir",
+        "control_wrong_key_rate": 1.0,
+        "saksi_wrong_key_rate": 0.0,
+        "saksi_cheater_named_rate": 1.0
+      },
+      {
+        "attack": "rushing: forge after seeing keys",
+        "trials": 500,
+        "control": "one-round reveal (protocol violation)",
+        "control_wrong_key_rate": null,
+        "control_tag_layer_bypassed_rate": 1.0,
+        "control_then_caught_by_syndrome_rate": 1.0,
+        "saksi_tag_layer_bypassed_rate": 0.0
+      },
+      {
+        "attack": "3 of 5 colluders (beyond the c < n/2 bound)",
+        "trials": 100,
+        "saksi_wrong_key_rate": 1.0,
+        "saksi_fail_closed_rate": 0.0,
+        "note": "expected: honest-majority bound is tight; with c >= t the coalition holds the key anyway"
+      }
+    ]
+  },
+  "E6_rust_core": {
+    "trials": 150,
+    "correct_key_rate": 1.0,
+    "wrong_key_rate": 0.0,
+    "cheater_named_rate": 1.0,
+    "seconds": 0.5
+  },
+  "E7_fuzz_rust": {
+    "mutated_bundles": 2000,
+    "crashes": 0,
+    "wrong_key_returned": 0
+  },
+  "E8_python_reference_timing": {
+    "op": "F.mul fixed 0 vs random",
+    "samples": 200000,
+    "t": -380.19,
+    "verdict": "LEAK",
+    "note": "expected: Python big integers are variable-time; this is why the core is in Rust"
+  },
+  "_meta": {
+    "seconds": 5.0,
+    "python": "3.13.18",
+    "date": "2026-11-12"
+  }
+}

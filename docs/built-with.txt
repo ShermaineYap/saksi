@@ -1,0 +1,1 @@
+rust, webassembly, python, latex, z3, next.js, typescript, gemini, groq, secret-sharing, reed-solomon, number-theory, linear-algebra, cryptography

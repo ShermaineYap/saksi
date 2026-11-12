@@ -1,0 +1,15 @@
+core/target/
+web/node_modules/
+web/.next/
+web/.env*
+web/tsconfig.tsbuildinfo
+__pycache__/
+.pytest_cache/
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/build.log
+*.pyc
+.DS_Store

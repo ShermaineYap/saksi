@@ -1,0 +1,1 @@
+Split a master key so any t of n custodians can rebuild it, and every forged share is caught and named, with unconditional security. Rust core, proofs, attack harness, live agent.

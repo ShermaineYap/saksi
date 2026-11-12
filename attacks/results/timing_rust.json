@@ -1,0 +1,8 @@
+[
+  {"op":"Fe::mul (fixed 0 vs random)","samples":1000000,"t":0.50,"mean_fixed":88.6,"mean_random":88.6,"verdict":"no leak detected"},
+  {"op":"Fe::inv (fixed 1 vs random)","samples":250000,"t":1.11,"mean_fixed":4899.9,"mean_random":4899.9,"verdict":"no leak detected"},
+  {"op":"tag verify (valid vs forged tag)","samples":1000000,"t":-0.85,"mean_fixed":146.5,"mean_random":146.5,"verdict":"no leak detected"},
+  {"op":"Lagrange combine 3 shares (zero key vs random key)","samples":1000000,"t":0.57,"mean_fixed":130.7,"mean_random":130.7,"verdict":"no leak detected"},
+  {"op":"CONTROL leaky Euclid inverse (fixed 1 vs random)","samples":250000,"t":-3421.23,"mean_fixed":135.1,"mean_random":2667.6,"verdict":"LEAK"},
+  {"op":"CONTROL leaky early-exit compare (equal vs random)","samples":1000000,"t":192.46,"mean_fixed":90.1,"mean_random":85.9,"verdict":"LEAK"}
+]
