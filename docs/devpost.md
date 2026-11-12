@@ -118,7 +118,7 @@ The core is written in **Rust** and also compiles to WebAssembly. Every operatio
 
 **Timing study.** I followed the dudect method: inputs are prepared before timing, classes are interleaved at random, 5% of outliers are cropped, and a Welch t-test is applied (a leak means |t| > 4.5). My first run was invalid because it generated the random inputs inside the timed region, so I redid it.
 
-| Operation (Rust core) | Samples | \|t\| | Verdict |
+| Operation (Rust core) | Samples | Welch t (absolute) | Verdict |
 |---|---:|---:|---|
 | field multiply (fixed 0 vs random) | 1,000,000 | 0.50 | no leak detected |
 | field inverse (fixed 1 vs random) | 250,000 | 1.11 | no leak detected |
