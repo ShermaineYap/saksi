@@ -11,7 +11,7 @@ import { ask, windowsOf, type AgentEvent, type LeakIndex, type LedgerEntry } fro
 import type { Content } from "@/lib/agentServer";
 
 const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/ShermaineYap/saksi";
-const VIDEO = process.env.NEXT_PUBLIC_VIDEO_URL || "";
+const VIDEO = process.env.NEXT_PUBLIC_VIDEO_URL || "https://youtu.be/GXIt0Ia1Kog";
 
 const CUSTODIANS = [
   ["This browser", "Kept in this device's storage"],

@@ -155,7 +155,7 @@ The WebAssembly build runs in a browser app. An API credential is dealt 3-of-5 a
 - 📄 Paper (13 pages, LaTeX source and PDF): https://github.com/ShermaineYap/saksi/blob/main/paper/saksi.pdf
 - 💻 Code (Rust core, Python reference, attack harness): https://github.com/ShermaineYap/saksi
 - 🌐 Live demo: https://saksi-gamma.vercel.app
-- 🎬 Video: SAKSI_VIDEO_URL
+- 🎬 Video: https://youtu.be/GXIt0Ia1Kog
 
 ---
 
