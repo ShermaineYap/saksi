@@ -1,8 +1,8 @@
 // Server-side LLM bridge. Conversation is kept in Gemini "contents" format by the client;
 // model parts (including any thought signatures) are passed back verbatim.
 
-export type Part = { text?: string; functionCall?: { name: string; args?: Record<string, unknown> };
-  functionResponse?: { name: string; response: unknown }; [k: string]: unknown };
+export type Part = { text?: string; functionCall?: { name: string; args?: Record<string, unknown>; id?: string };
+  functionResponse?: { name: string; response: unknown; id?: string }; [k: string]: unknown };
 export type Content = { role: "user" | "model"; parts: Part[] };
 
 export const SYSTEM = `You are Kunci, the operations agent for Kedai Runcit Maju Sdn Bhd, a small Malaysian grocery wholesaler (fictional demo company).

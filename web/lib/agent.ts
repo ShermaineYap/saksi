@@ -100,7 +100,8 @@ export async function ask(question: string, history: Content[], deps: Deps): Pro
       const ep = args.endpoint || "health";
       const out = await useCredential(deps, ep, args.month);
       deps.onEvent({ type: "tool", endpoint: ep, month: args.month, ok: out.ok, summary: summarize(out.body) });
-      responses.push({ functionResponse: { name: c.functionCall!.name, response: out.body } });
+      const id = (c.functionCall as { id?: string }).id;
+      responses.push({ functionResponse: { name: c.functionCall!.name, response: out.body, ...(id ? { id } : {}) } });
     }
     contents.push({ role: "user", parts: responses });
   }
