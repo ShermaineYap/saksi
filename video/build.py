@@ -44,10 +44,30 @@ def still(png, seconds, out):
     tmp.rename(out)
 
 
-def recording(src, start, seconds, out):
+FONT = str(Path.home() / ".fonts" / "SchibstedGrotesk.ttf")
+# Jump cuts (relative to the scene start) that remove model waiting time, with an on-screen note.
+CUTS = {"s5": [(0.0, 21.0), (38.5, 45.0)]}
+
+
+def recording(src, start, seconds, out, name=None):
     tmp = out.with_suffix(".tmp.mp4")
-    vf = f"fps=30,scale=1920:1080,tpad=stop_mode=clone:stop_duration=30,trim=duration={seconds:.3f},setpts=PTS-STARTPTS,fade=t=in:st=0:d=0.25"
-    run(["ffmpeg", "-y", "-v", "error", "-ss", f"{start:.3f}", "-i", str(src), "-vf", vf, "-an", *ENC, str(tmp)])
+    segs = CUTS.get(name)
+    if segs:
+        parts, labels = [], []
+        for k, (a, b) in enumerate(segs):
+            parts.append(f"[0:v]trim=start={start + a:.3f}:end={start + b:.3f},setpts=PTS-STARTPTS,fps=30,scale=1920:1080[p{k}]")
+            labels.append(f"[p{k}]")
+        cut_at = segs[0][1] - segs[0][0]
+        removed = sum(b - a for a, b in zip([s[1] for s in segs[:-1]], [s[0] for s in segs[1:]]))
+        note = (f"drawtext=fontfile={FONT}:text='{removed:.0f} s of waiting for the model cut':fontsize=34:"
+                f"fontcolor=0xF7F9F5:box=1:boxcolor=0x14304A@0.85:boxborderw=14:x=w-tw-60:y=60:"
+                f"enable='between(t,{cut_at:.2f},{cut_at + 2.5:.2f})'")
+        fc = ";".join(parts) + ";" + "".join(labels) + f"concat=n={len(segs)}:v=1:a=0[c];" + \
+             f"[c]tpad=stop_mode=clone:stop_duration=30,trim=duration={seconds:.3f},setpts=PTS-STARTPTS,fade=t=in:st=0:d=0.25,{note}[v]"
+        run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-filter_complex", fc, "-map", "[v]", "-an", *ENC, str(tmp)])
+    else:
+        vf = f"fps=30,scale=1920:1080,tpad=stop_mode=clone:stop_duration=30,trim=duration={seconds:.3f},setpts=PTS-STARTPTS,fade=t=in:st=0:d=0.25"
+        run(["ffmpeg", "-y", "-v", "error", "-ss", f"{start:.3f}", "-i", str(src), "-vf", vf, "-an", *ENC, str(tmp)])
     tmp.rename(out)
 
 
@@ -96,7 +116,7 @@ def main(only):
         if only and name not in only and out.exists():
             continue
         if rec:
-            recording(rec[0], rec[1], secs, out)
+            recording(rec[0], rec[1], secs, out, name)
         else:
             still(V / "slides" / "html" / f"{name}.png", secs, out)
         print("scene", name, round(secs, 2))

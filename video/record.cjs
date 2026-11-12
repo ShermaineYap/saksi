@@ -53,8 +53,8 @@ async function s5(browser) {
   await page.evaluate(() => { window.__t0 = performance.now(); });
   await wait(2500);
   await page.getByRole("button", { name: "Which customers are overdue, and by how much?" }).click();
-  await page.waitForSelector("#agent .msg.bot", { timeout: 60000 });
-  await wait(9000);
+  await page.waitForSelector("#agent .msg.bot", { timeout: 90000 });
+  await wait(6500);
   // three liars, then ask again: refused
   await scroll(page, "#custodians");
   for (const k of [0, 1, 3]) {
@@ -63,8 +63,10 @@ async function s5(browser) {
   }
   await scroll(page, "#agent");
   await page.getByRole("button", { name: "Berapa jumlah invois bulan Oktober?" }).click();
-  await page.waitForSelector("#agent .msg.tool.fail", { timeout: 60000 });
-  await wait(Math.max(2500, 29000 - (Date.now() - t0)));
+  await page.waitForSelector("#agent .msg.tool.fail", { timeout: 90000 });
+  await page.waitForFunction(() => document.querySelectorAll("#agent .msg.bot").length >= 2, null, { timeout: 90000 });
+  await page.evaluate(() => { const c = document.querySelector("#agent .chat"); c.scrollTop = c.scrollHeight; });
+  await wait(Math.max(3500, 29000 - (Date.now() - t0)));
   const lead = await page.evaluate(() => window.__t0 / 1000);
   await ctx.close();
   require("fs").writeFileSync("/home/claude/video/rec/s5/lead.txt", String(lead));
