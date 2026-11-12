@@ -11,7 +11,7 @@ Entry for the *Mathematics for Systems Security* hackathon (cryptographic track)
 | | |
 |---|---|
 | Paper (13 pages, proofs and experiments) | [`paper/saksi.pdf`](paper/saksi.pdf) |
-| Live demo (WASM core + AI agent) | SAKSI_DEMO_URL |
+| Live demo (WASM core + AI agent) | https://saksi-gamma.vercel.app |
 | Video | SAKSI_VIDEO_URL |
 
 ## What it guarantees

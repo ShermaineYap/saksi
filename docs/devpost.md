@@ -6,7 +6,7 @@ This matters most for software agents. An AI agent that needs an API credential 
 
 **SAKSI** (Malay for *witness*) is a cryptographic algorithm that does this. Its only mathematics is number theory and linear algebra, and it uses no pre-existing cipher anywhere.
 
-![Protocol flow](IMG_BASE/flow.png)
+![Protocol flow](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/flow.png)
 
 ## The scheme
 
@@ -14,30 +14,30 @@ SAKSI works over the Mersenne prime field 𝔽ₚ with **p = 2¹²⁷ − 1**. T
 
 **1. Share.** Each limb is encoded with a random polynomial of degree < t, which is a Vandermonde matrix–vector product.
 
-![Vandermonde sharing](IMG_BASE/eq_sharing.png)
+![Vandermonde sharing](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/eq_sharing.png)
 
 **2. Witness.** Every share i carries one tag per other custodian j. Each tag is computed under a one-time key that only j holds. The tag is an inner product that authenticates all limbs of the share **and** its public context (session id, epoch and index) in a single field element.
 
-![Context and witness tag](IMG_BASE/eq_context_tag.png)
+![Context and witness tag](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/eq_context_tag.png)
 
 **3. Two-round reveal.** Shares and tags are fixed first; only then are the keys released. A share is accepted when at least ⌊(n−1)/2⌋ other custodians' keys confirm it. Comparisons are constant time.
 
-![Votes](IMG_BASE/eq_vote.png)
+![Votes](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/eq_vote.png)
 
 **4. Syndrome cross-check.** The accepted shares must form a Reed–Solomon codeword. A non-zero parity-check syndrome reveals an inconsistency, for example a dishonest dealer, and Gao decoding pinpoints which share is wrong.
 
-![Syndrome](IMG_BASE/eq_syndrome.png)
+![Syndrome](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/eq_syndrome.png)
 
 **5. Reconstruct.** The key is rebuilt only from validated shares. With fewer than t valid shares the result is ⊥ and no key is output.
 
-![Lagrange](IMG_BASE/eq_lagrange.png)
+![Lagrange](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/eq_lagrange.png)
 
-![Deal algorithm](IMG_BASE/alg_deal.png)
-![Reconstruct algorithm](IMG_BASE/alg_reconstruct.png)
+![Deal algorithm](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/alg_deal.png)
+![Reconstruct algorithm](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/alg_reconstruct.png)
 
 **Proactive refresh.** Adding a fresh sharing of zero moves every share to a new polynomial and a new epoch with new keys. A share stolen before the refresh is rejected after it.
 
-![Refresh](IMG_BASE/eq_refresh.png)
+![Refresh](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/eq_refresh.png)
 
 **Keyless fallback.** With no keys at all, Reed–Solomon decoding over n shares corrects up to ⌊(n−t)/2⌋ bad shares. This is a second validation mechanism that works independently of the tags.
 
@@ -47,9 +47,9 @@ SAKSI works over the Mersenne prime field 𝔽ₚ with **p = 2¹²⁷ − 1**. T
 
 The three security theorems below are proved in full in the paper (PDF linked below). None of them relies on a hardness assumption.
 
-![Theorem 1](IMG_BASE/thm_privacy.png)
-![Theorem 2](IMG_BASE/thm_forgery.png)
-![Theorem 3](IMG_BASE/thm_robust.png)
+![Theorem 1](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/thm_privacy.png)
+![Theorem 2](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/thm_forgery.png)
+![Theorem 3](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/thm_robust.png)
 
 Because the guarantees are information-theoretic, they hold against an adversary with unlimited computing power, quantum computers included. Nothing rests on factoring, discrete logarithms, lattices or hash functions.
 
@@ -60,7 +60,7 @@ Because the guarantees are information-theoretic, they hold against an adversary
 - **E3 Z3 collusion attack.** With 2 of 3 needed shares, the SMT solver still finds all 31 of 31 candidate secrets for SAKSI (0 bits leaked). Against Mignotte CRT sharing it narrows 1,993 candidates to 14, a leak of 7.15 bits.
 - **E4 Forgery rate.** I ran 200,000 forgeries for each of nine primes from 5 to 257. The measured success rate tracks 1/p, with a largest deviation of 0.001.
 
-![Forgery rate](IMG_BASE/fig_forgery.png)
+![Forgery rate](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/fig_forgery.png)
 
 - **E5 Active attacks at full size** (p = 2¹²⁷ − 1, n = 5, t = 3, 32-byte key):
 
@@ -110,7 +110,7 @@ The ingredients are classical: Shamir 1979, Rabin–Ben-Or 1989 check vectors, G
 - **Number theory.** The Mersenne prime 2¹²⁷ − 1 gives reduction by shift-and-add because 2¹²⁷ ≡ 1. Inversion is by Fermat, a⁻¹ = aᵖ⁻². The forgery bounds come from counting in the field.
 - **Linear algebra.** Shares are a Vandermonde product y = Va and reconstruction uses Lagrange coefficients. The tags are inner products ⟨α, m⟩. The syndrome is a parity-check matrix H = (vᵢxᵢᵏ), and its rank argument proves that the syndrome is zero exactly for valid share sets. Decoding is Reed–Solomon.
 
-![Mersenne reduction](IMG_BASE/eq_mersenne.png)
+![Mersenne reduction](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/eq_mersenne.png)
 
 ## Rust implementation and side channels
 
@@ -127,7 +127,7 @@ The core is written in **Rust** and also compiles to WebAssembly. Every operatio
 | *control:* leaky Euclid inverse | 250,000 | 3421.23 | LEAK |
 | *control:* early-exit compare | 1,000,000 | 192.46 | LEAK |
 
-![Timing](IMG_BASE/fig_timing.png)
+![Timing](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/fig_timing.png)
 
 Both deliberately leaky controls are flagged, which shows the test can detect a leak when one exists.
 
@@ -154,7 +154,7 @@ The WebAssembly build runs in a browser app. An API credential is dealt 3-of-5 a
 
 - 📄 Paper (13 pages, LaTeX source and PDF): https://github.com/ShermaineYap/saksi/blob/main/paper/saksi.pdf
 - 💻 Code (Rust core, Python reference, attack harness): https://github.com/ShermaineYap/saksi
-- 🌐 Live demo: SAKSI_DEMO_URL
+- 🌐 Live demo: https://saksi-gamma.vercel.app
 - 🎬 Video: SAKSI_VIDEO_URL
 
 ---
