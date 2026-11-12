@@ -10,40 +10,40 @@ This matters most for software agents. An AI agent that needs an API credential 
 
 ## The scheme
 
-SAKSI works over the Mersenne prime field \\(\mathbb{F}_p\\) with \\(p = 2^{127} - 1\\). The key is cut into 120-bit limbs (15 bytes each, so a 32-byte key is 3 limbs), and each limb is shared independently. Any UTF-8 or binary secret works.
+SAKSI works over the Mersenne prime field \\(\mathbb{F}\_p\\) with \\(p = 2^{127} - 1\\). The key is cut into 120-bit limbs (15 bytes each, so a 32-byte key is 3 limbs), and each limb is shared independently. Any UTF-8 or binary secret works.
 
 **1. Share.** Each limb is encoded with a random polynomial of degree < t, which is a Vandermonde matrix–vector product.
 
 $$
-f_\ell(X) = s_\ell + a_{\ell,1}X + \cdots + a_{\ell,t-1}X^{t-1},\quad a_{\ell,k} \xleftarrow{\$} \mathbb{F}_p,\qquad
-\mathbf{y}_\ell = V\mathbf{a}_\ell,\quad V = \begin{pmatrix} 1 & 1 & \cdots & 1 \\ 1 & 2 & \cdots & 2^{t-1} \\ \vdots & \vdots & & \vdots \\ 1 & n & \cdots & n^{t-1} \end{pmatrix}
+f\_\ell(X) = s\_\ell + a\_{\ell,1}X + \cdots + a\_{\ell,t-1}X^{t-1},\quad a\_{\ell,k} \in \mathbb{F}\_p \text{ uniform},\qquad
+\mathbf{y}\_\ell = V\mathbf{a}\_\ell,\quad V = \begin{pmatrix} 1 & 1 & \cdots & 1 \\\\ 1 & 2 & \cdots & 2^{t-1} \\\\ \vdots & \vdots & & \vdots \\\\ 1 & n & \cdots & n^{t-1} \end{pmatrix}
 $$
 
 **2. Witness.** Every share i carries one tag per other custodian j. Each tag is computed under a one-time key that only j holds. The tag is an inner product that authenticates all limbs of the share **and** its public context (session id, epoch and index) in a single field element.
 
 $$
-\mathsf{ctx}_i = \mathsf{sid} + 2^{64}e + 2^{96}i,\qquad
-\tau_{j,i} = \beta_{j,i} + \alpha_{j,i,0}\,\mathsf{ctx}_i + \sum_{\ell=1}^{L} \alpha_{j,i,\ell}\, y_{i,\ell} \pmod{p}
+\mathsf{ctx}\_i = \mathsf{sid} + 2^{64}e + 2^{96}i,\qquad
+\tau\_{j,i} = \beta\_{j,i} + \alpha\_{j,i,0}\\,\mathsf{ctx}\_i + \sum\_{\ell=1}^{L} \alpha\_{j,i,\ell}\\, y\_{i,\ell} \pmod{p}
 $$
 
 **3. Two-round reveal.** Shares and tags are fixed first; only then are the keys released. A share is accepted when at least ⌊(n−1)/2⌋ other custodians' keys confirm it. Comparisons are constant time.
 
 $$
-\mathrm{votes}_i = \#\{\, j \neq i : \text{custodian } j\text{'s one-time key confirms } \tau_{j,i} \,\},\qquad
-\text{accept } i \iff \mathrm{votes}_i \ge T = \left\lfloor \tfrac{n-1}{2} \right\rfloor
+\mathrm{votes}\_i = \\#\\{\\, j \neq i : \text{custodian } j\text{'s one-time key confirms } \tau\_{j,i} \\,\\},\qquad
+\text{accept } i \iff \mathrm{votes}\_i \ge T = \left\lfloor \tfrac{n-1}{2} \right\rfloor
 $$
 
 **4. Syndrome cross-check.** The accepted shares must form a Reed–Solomon codeword. A non-zero parity-check syndrome reveals an inconsistency, for example a dishonest dealer, and Gao decoding pinpoints which share is wrong.
 
 $$
-S_k = \sum_{i \in A} v_i\, x_i^{k}\, y_i \quad (k = 0, \dots, m-t-1),\qquad v_i = \prod_{j \in A,\, j \neq i} (x_i - x_j)^{-1},\qquad
-\mathbf{S} = \mathbf{0} \iff \exists f,\ \deg f < t,\ f(x_i) = y_i\ \forall i \in A
+S\_k = \sum\_{i \in A} v\_i\\, x\_i^{k}\\, y\_i \quad (k = 0, \dots, m-t-1),\qquad v\_i = \prod\_{j \in A,\\, j \neq i} (x\_i - x\_j)^{-1},\qquad
+\mathbf{S} = \mathbf{0} \iff \exists f,\ \deg f < t,\ f(x\_i) = y\_i\ \forall i \in A
 $$
 
 **5. Reconstruct.** The key is rebuilt only from validated shares. With fewer than t valid shares the result is ⊥ and no key is output.
 
 $$
-s_\ell = \sum_{i \in A'} \lambda_i\, y_{i,\ell},\qquad \lambda_i = \prod_{j \in A',\, j \neq i} \frac{x_j}{x_j - x_i},\qquad |A'| = t
+s\_\ell = \sum\_{i \in A'} \lambda\_i\\, y\_{i,\ell},\qquad \lambda\_i = \prod\_{j \in A',\\, j \neq i} \frac{x\_j}{x\_j - x\_i},\qquad |A'| = t
 $$
 
 ![Deal algorithm](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/alg_deal.png)
@@ -52,7 +52,7 @@ $$
 **Proactive refresh.** Adding a fresh sharing of zero moves every share to a new polynomial and a new epoch with new keys. A share stolen before the refresh is rejected after it.
 
 $$
-y'_{i,\ell} = y_{i,\ell} + z_\ell(i),\qquad z_\ell(0) = 0,\ \deg z_\ell < t,\qquad e \mapsto e + 1
+y'\_{i,\ell} = y\_{i,\ell} + z\_\ell(i),\qquad z\_\ell(0) = 0,\ \deg z\_\ell < t,\qquad e \mapsto e + 1
 $$
 
 **Keyless fallback.** With no keys at all, Reed–Solomon decoding over n shares corrects up to ⌊(n−t)/2⌋ bad shares. This is a second validation mechanism that works independently of the tags.
@@ -76,7 +76,7 @@ with equality for the best strategy.
 **Theorem 3 (robustness and identification).** Let \\(c = |C| \le T = \lfloor (n-1)/2 \rfloor\\) and \\(k = T - c + 1\\), with the two rounds ordered. Every honest share is accepted, and a modified share from a corrupted custodian is accepted with probability at most
 
 $$
-\binom{n-c}{k}\, p^{-k} \;\le\; \frac{2^{n}}{p}.
+\binom{n-c}{k}\\, p^{-k} \\;\le\\; \frac{2^{n}}{p}.
 $$
 
 So if at least \\(t\\) honest custodians respond, Reconstruct outputs \\(S\\) and names every modified share, except with probability at most \\(c \cdot 2^n / p\\).
@@ -143,7 +143,7 @@ The ingredients are classical: Shamir 1979, Rabin–Ben-Or 1989 check vectors, G
 - **Linear algebra.** Shares are a Vandermonde product y = Va and reconstruction uses Lagrange coefficients. The tags are inner products ⟨α, m⟩. The syndrome is a parity-check matrix H = (vᵢxᵢᵏ), and its rank argument proves that the syndrome is zero exactly for valid share sets. Decoding is Reed–Solomon.
 
 $$
-2^{127} \equiv 1 \pmod{p} \;\Longrightarrow\; x \bmod p = (x \bmod 2^{127}) + \lfloor x / 2^{127} \rfloor \ (\text{then one masked subtraction}),\qquad a^{-1} = a^{\,p-2}
+2^{127} \equiv 1 \pmod{p} \\;\Longrightarrow\\; x \bmod p = (x \bmod 2^{127}) + \lfloor x / 2^{127} \rfloor \ (\text{then one masked subtraction}),\qquad a^{-1} = a^{\\,p-2}
 $$
 
 ## Rust implementation and side channels
