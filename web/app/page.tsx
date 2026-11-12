@@ -7,7 +7,7 @@ import {
   assemble, deal, fingerprint, loadSaksi, plainShamir, reconstruct, reconstructKeyless, refresh,
   STATES, witnessMatrix, type Bundle, type CustodianState, type Outcome,
 } from "@/lib/saksi";
-import { ask, windowsOf, type AgentEvent, type LedgerEntry } from "@/lib/agent";
+import { ask, windowsOf, type AgentEvent, type LeakIndex, type LedgerEntry } from "@/lib/agent";
 import type { Content } from "@/lib/agentServer";
 
 const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/ShermaineYap/saksi";
@@ -42,7 +42,7 @@ export default function Page() {
   const [prev, setPrev] = useState<Bundle | null>(null);
   const [fp, setFp] = useState("");
   const [splitNote, setSplitNote] = useState("");
-  const windows = useRef<Set<string>>(new Set());
+  const windows = useRef<LeakIndex>({ fast: new Set(), strong: new Set() });
   // custodians
   const [states, setStates] = useState<CustodianState[]>(Array(9).fill("honest"));
   // reveal

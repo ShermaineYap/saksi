@@ -31,7 +31,7 @@ export async function callGemini(contents: Content[]): Promise<{ content: Conten
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("no-gemini-key");
   const models = (process.env.GEMINI_MODEL ||
-    "gemini-flash-latest,gemini-3-flash-preview,gemini-3-flash,gemini-2.5-flash,gemini-flash-lite-latest,gemini-2.5-flash-lite")
+    "gemini-3-flash-preview,gemini-flash-latest,gemini-3-flash,gemini-2.5-flash,gemini-flash-lite-latest,gemini-2.5-flash-lite")
     .split(",").map((s) => s.trim()).filter(Boolean);
   let last = "";
   for (const model of models) {

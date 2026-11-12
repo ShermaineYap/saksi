@@ -16,7 +16,7 @@ export type AgentEvent =
 
 export type Deps = {
   getRevealBundle: () => Bundle | null;           // what the custodians submit right now
-  leakWindows: Set<string>;                       // SHA-256 digests of every 8-char window of the credential
+  leakWindows: LeakIndex;                         // fingerprints of every 8-char window of the credential
   onLedger: (e: LedgerEntry) => void;
   onEvent: (e: AgentEvent) => void;
 };
@@ -26,15 +26,31 @@ async function sha(s: string): Promise<string> {
   return Array.from(new Uint8Array(d), (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-export async function windowsOf(secret: string): Promise<Set<string>> {
-  const out = new Set<string>();
-  for (let i = 0; i + 8 <= secret.length; i++) out.add(await sha(secret.slice(i, i + 8)));
-  return out;
+// 32-bit FNV-1a: a fast synchronous prefilter; SHA-256 confirms any candidate.
+function fnv(s: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h;
 }
 
-async function countLeaks(payload: string, windows: Set<string>): Promise<number> {
+export type LeakIndex = { fast: Set<number>; strong: Set<string> };
+
+export async function windowsOf(secret: string): Promise<LeakIndex> {
+  const fast = new Set<number>(), strong = new Set<string>();
+  for (let i = 0; i + 8 <= secret.length; i++) {
+    const w = secret.slice(i, i + 8);
+    fast.add(fnv(w));
+    strong.add(await sha(w));
+  }
+  return { fast, strong };
+}
+
+async function countLeaks(payload: string, idx: LeakIndex): Promise<number> {
   let found = 0;
-  for (let i = 0; i + 8 <= payload.length; i++) if (windows.has(await sha(payload.slice(i, i + 8)))) found++;
+  for (let i = 0; i + 8 <= payload.length; i++) {
+    const w = payload.slice(i, i + 8);
+    if (idx.fast.has(fnv(w)) && idx.strong.has(await sha(w))) found++;
+  }
   return found;
 }
 
@@ -72,7 +88,7 @@ async function useCredential(deps: Deps, endpoint: string, month?: string) {
 
 async function step(contents: Content[], deps: Deps): Promise<{ content: Content; provider: string; model: string } | null> {
   const payload = JSON.stringify({ contents });
-  const leaks = deps.leakWindows.size ? await countLeaks(payload, deps.leakWindows) : 0;
+  const leaks = deps.leakWindows.strong.size ? await countLeaks(payload, deps.leakWindows) : 0;
   const r = await fetch("/api/agent", { method: "POST", headers: { "Content-Type": "application/json" }, body: payload });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) {
