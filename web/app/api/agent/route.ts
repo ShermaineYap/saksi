@@ -2,6 +2,7 @@ import { callGemini, callGroq, type Content } from "@/lib/agentServer";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 // Best-effort per-instance rate limit so the free LLM quota survives judging.
 const hits = new Map<string, number[]>();

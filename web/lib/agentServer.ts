@@ -30,11 +30,15 @@ export const TOOLS = [
 export async function callGemini(contents: Content[]): Promise<{ content: Content; model: string }> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("no-gemini-key");
-  const models = (process.env.GEMINI_MODEL || "gemini-2.5-flash,gemini-flash-latest,gemini-2.0-flash")
+  const models = (process.env.GEMINI_MODEL ||
+    "gemini-flash-latest,gemini-3-flash-preview,gemini-3-flash,gemini-2.5-flash,gemini-flash-lite-latest,gemini-2.5-flash-lite")
     .split(",").map((s) => s.trim()).filter(Boolean);
   let last = "";
   for (const model of models) {
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    let r: Response;
+    try {
+      r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      signal: AbortSignal.timeout(18_000),
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": key },
       body: JSON.stringify({
@@ -43,8 +47,13 @@ export async function callGemini(contents: Content[]): Promise<{ content: Conten
         tools: [{ functionDeclarations: TOOLS }],
         generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
       }),
-    });
-    if (r.status === 404) { last = `${model}: not found`; continue; }
+      });
+    } catch (e) {
+      last = `${model}: ${(e as Error).name}`;
+      continue; // timeout or network error: try the next model
+    }
+    // Retired model (404), overloaded (503/500) or rate-limited (429): try the next model.
+    if ([404, 429, 500, 503].includes(r.status)) { last = `${model}: ${r.status}`; continue; }
     if (!r.ok) throw new Error(`gemini ${model} ${r.status}: ${(await r.text()).slice(0, 300)}`);
     const j = await r.json();
     const content = j?.candidates?.[0]?.content as Content | undefined;
@@ -83,6 +92,7 @@ export async function callGroq(contents: Content[]): Promise<{ content: Content;
     }
   }
   const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    signal: AbortSignal.timeout(20_000),
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify({ model, messages, temperature: 0.2, max_tokens: 1024,
