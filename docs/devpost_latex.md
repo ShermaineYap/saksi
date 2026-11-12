@@ -15,35 +15,55 @@ SAKSI works over the Mersenne prime field \\(\mathbb{F}\_p\\) with \\(p = 2^{127
 **1. Share.** Each limb is encoded with a random polynomial of degree < t, which is a Vandermonde matrix–vector product.
 
 $$
-f\_\ell(X) = s\_\ell + a\_{\ell,1}X + \cdots + a\_{\ell,t-1}X^{t-1},\quad a\_{\ell,k} \in \mathbb{F}\_p \text{ uniform},\qquad
-\mathbf{y}\_\ell = V\mathbf{a}\_\ell,\quad V = \begin{pmatrix} 1 & 1 & \cdots & 1 \\\\ 1 & 2 & \cdots & 2^{t-1} \\\\ \vdots & \vdots & & \vdots \\\\ 1 & n & \cdots & n^{t-1} \end{pmatrix}
+f\_\ell(X) = s\_\ell + a\_{\ell,1}X + \cdots + a\_{\ell,t-1}X^{t-1}, \qquad a\_{\ell,k} \in \mathbb{F}\_p \text{ uniform}
+$$
+
+$$
+\mathbf{y}\_\ell = V\mathbf{a}\_\ell, \qquad V = \begin{pmatrix} 1 & 1 & \cdots & 1 \\\\ 1 & 2 & \cdots & 2^{t-1} \\\\ \vdots & \vdots & & \vdots \\\\ 1 & n & \cdots & n^{t-1} \end{pmatrix}
 $$
 
 **2. Witness.** Every share i carries one tag per other custodian j. Each tag is computed under a one-time key that only j holds. The tag is an inner product that authenticates all limbs of the share **and** its public context (session id, epoch and index) in a single field element.
 
 $$
-\mathsf{ctx}\_i = \mathsf{sid} + 2^{64}e + 2^{96}i,\qquad
+\mathsf{ctx}\_i = \mathsf{sid} + 2^{64}e + 2^{96}i
+$$
+
+$$
 \tau\_{j,i} = \beta\_{j,i} + \alpha\_{j,i,0}\\,\mathsf{ctx}\_i + \sum\_{\ell=1}^{L} \alpha\_{j,i,\ell}\\, y\_{i,\ell} \pmod{p}
 $$
 
 **3. Two-round reveal.** Shares and tags are fixed first; only then are the keys released. A share is accepted when at least ⌊(n−1)/2⌋ other custodians' keys confirm it. Comparisons are constant time.
 
 $$
-\mathrm{votes}\_i = \\#\\{\\, j \neq i : \text{custodian } j\text{'s one-time key confirms } \tau\_{j,i} \\,\\},\qquad
+\mathrm{votes}\_i = \\#\\{\\, j \neq i : \kappa\_{j,i} \text{ confirms } \tau\_{j,i} \\,\\}
+$$
+
+$$
 \text{accept } i \iff \mathrm{votes}\_i \ge T = \left\lfloor \tfrac{n-1}{2} \right\rfloor
 $$
 
 **4. Syndrome cross-check.** The accepted shares must form a Reed–Solomon codeword. A non-zero parity-check syndrome reveals an inconsistency, for example a dishonest dealer, and Gao decoding pinpoints which share is wrong.
 
 $$
-S\_k = \sum\_{i \in A} v\_i\\, x\_i^{k}\\, y\_i \quad (k = 0, \dots, m-t-1),\qquad v\_i = \prod\_{j \in A,\\, j \neq i} (x\_i - x\_j)^{-1},\qquad
-\mathbf{S} = \mathbf{0} \iff \exists f,\ \deg f < t,\ f(x\_i) = y\_i\ \forall i \in A
+S\_k = \sum\_{i \in A} v\_i\\, x\_i^{k}\\, y\_i, \qquad k = 0, \dots, m-t-1
+$$
+
+$$
+v\_i = \prod\_{j \in A,\\, j \neq i} (x\_i - x\_j)^{-1}
+$$
+
+$$
+\mathbf{S} = \mathbf{0} \iff \exists f,\ \deg f < t : f(x\_i) = y\_i \ \ \forall i \in A
 $$
 
 **5. Reconstruct.** The key is rebuilt only from validated shares. With fewer than t valid shares the result is ⊥ and no key is output.
 
 $$
-s\_\ell = \sum\_{i \in A'} \lambda\_i\\, y\_{i,\ell},\qquad \lambda\_i = \prod\_{j \in A',\\, j \neq i} \frac{x\_j}{x\_j - x\_i},\qquad |A'| = t
+s\_\ell = \sum\_{i \in A'} \lambda\_i\\, y\_{i,\ell}, \qquad |A'| = t
+$$
+
+$$
+\lambda\_i = \prod\_{j \in A',\\, j \neq i} \frac{x\_j}{x\_j - x\_i}
 $$
 
 ![Deal algorithm](https://raw.githubusercontent.com/ShermaineYap/saksi/main/docs/img/alg_deal.png)
@@ -52,7 +72,7 @@ $$
 **Proactive refresh.** Adding a fresh sharing of zero moves every share to a new polynomial and a new epoch with new keys. A share stolen before the refresh is rejected after it.
 
 $$
-y'\_{i,\ell} = y\_{i,\ell} + z\_\ell(i),\qquad z\_\ell(0) = 0,\ \deg z\_\ell < t,\qquad e \mapsto e + 1
+y'\_{i,\ell} = y\_{i,\ell} + z\_\ell(i), \qquad z\_\ell(0) = 0,\ \ \deg z\_\ell < t, \qquad e \mapsto e+1
 $$
 
 **Keyless fallback.** With no keys at all, Reed–Solomon decoding over n shares corrects up to ⌊(n−t)/2⌋ bad shares. This is a second validation mechanism that works independently of the tags.
@@ -65,7 +85,7 @@ The theorems below are proved in full in the paper (PDF linked below). None of t
 
 **Theorem 1 (perfect secrecy, including tags).** For every coalition \\(C\\) with \\(|C| \le t-1\\) and every two secrets \\(S, S'\\) of equal length, the joint view of \\(C\\) after Deal (shares, tags, keys and header) has the same distribution under \\(S\\) and \\(S'\\).
 
-**Theorem 2 (witness forgery).** For every adversary, even a computationally unbounded one:
+**Theorem 2 (witness forgery).** For every adversary, even a computationally unbounded one,
 
 $$
 \Pr[\mathsf{Forge}] \le \frac{1}{p} = 2^{-127},
@@ -79,9 +99,9 @@ $$
 \binom{n-c}{k}\\, p^{-k} \\;\le\\; \frac{2^{n}}{p}.
 $$
 
-So if at least \\(t\\) honest custodians respond, Reconstruct outputs \\(S\\) and names every modified share, except with probability at most \\(c \cdot 2^n / p\\).
+So if at least \\(t\\) honest custodians respond, Reconstruct outputs the key and names every modified share, except with probability at most \\(c \cdot 2^n / p\\).
 
-**Theorem 4 (keyless decoding).** With \\(m \ge t\\) shares of which \\(e\\) are wrong, Gao decoding returns the dealt polynomial and exactly the wrong indices when \\(e \le \lfloor (m-t)/2 \rfloor\\), and the syndrome is non-zero whenever \\(1 \le e \le m - t\\).
+**Theorem 4 (keyless decoding).** With \\(m \ge t\\) shares of which \\(e\\) are wrong, Gao decoding returns the dealt polynomial and exactly the wrong indices when \\(e \le \lfloor (m-t)/2 \rfloor\\), and the syndrome is non-zero whenever \\(1 \le e \le m-t\\).
 
 Because the guarantees are information-theoretic, they hold against an adversary with unlimited computing power, quantum computers included. Nothing rests on factoring, discrete logarithms, lattices or hash functions.
 
@@ -143,7 +163,11 @@ The ingredients are classical: Shamir 1979, Rabin–Ben-Or 1989 check vectors, G
 - **Linear algebra.** Shares are a Vandermonde product y = Va and reconstruction uses Lagrange coefficients. The tags are inner products ⟨α, m⟩. The syndrome is a parity-check matrix H = (vᵢxᵢᵏ), and its rank argument proves that the syndrome is zero exactly for valid share sets. Decoding is Reed–Solomon.
 
 $$
-2^{127} \equiv 1 \pmod{p} \\;\Longrightarrow\\; x \bmod p = (x \bmod 2^{127}) + \lfloor x / 2^{127} \rfloor \ (\text{then one masked subtraction}),\qquad a^{-1} = a^{\\,p-2}
+2^{127} \equiv 1 \pmod{p} \\;\Longrightarrow\\; x \bmod p = (x \bmod 2^{127}) + \lfloor x / 2^{127} \rfloor
+$$
+
+$$
+a^{-1} = a^{\\,p-2} \pmod{p}
 $$
 
 ## Rust implementation and side channels
